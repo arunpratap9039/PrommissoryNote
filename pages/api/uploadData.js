@@ -53,7 +53,7 @@ async function storeDataInBlockchain(actualFileName, uniqueFileName) {
     if (isStored == false) {
             try {
                 const formData = new FormData();
-                const file = fs.createReadStream("./pages/uploads/Europass.pdf");
+                const file = fs.createReadStream("./pages/uploads/Untitled Diagram.drawio.png");
                 formData.append("file", file);
                 const pinataMetadata = JSON.stringify({
                     name: "File name",

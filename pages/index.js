@@ -45,7 +45,6 @@ function App() {
   return(
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1>⁂<span>Store IPFS hash on blockchain</span>⁂</h1>
       </header>
       <form onSubmit={handleSubmit}>
         <label className={styles.lable}>Enter Unique Filename: </label>

@@ -18,12 +18,14 @@
     "files-from-path": "^1.0.4",
     "formidable": "^2.1.1",
     "fs": "^0.0.1-security",
+    "mongoose": "^8.4.4",
     "multiformats": "^9.9.0",
     "next": "13.3.0",
     "path": "^0.12.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "serverless-webpack": "^1.0.0-rc.3",
+    "web3": "^4.10.0",
     "web3.storage": "^4.5.4",
     "webpack": "^1.13.1"
   }

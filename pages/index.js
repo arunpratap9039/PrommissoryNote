@@ -1,63 +1,37 @@
+import Link from "next/link";
 import React, {useState, useEffect} from "react";
 import styles from "./page.module.css";
 import { setRequestMeta } from "next/dist/server/request-meta";
+import { ethers } from "ethers";
 
-function App() {
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const [result, setResult] = useState("");
+// start, create the login with authentication
+function HomePage() {
+  const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setIsMetamaskInstalled(!!window.ethereum);
+  }, []);
 
-  const handleChange = (e) => {
-    if(e.target.name === "filename") {
-      setFileName(e.target.value);
-    }
-    if(e.target.name === "file") {
-      setFile(e.target.files[0]);
-    }
+  async function handleMetamaskLogin() {
+
+
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    try {
-      var formData = new FormData();
-      formData.append("filename", fileName);
-      formData.append("file", file);
-
-      const res = await fetch("/api/uploadData", {
-        method: "POST",
-        body: formData
-      });
-
-      if (!res.ok) {
-        throw new Error("Network response is not ok");
-      }
-      const data = await res.json();    
-      setResult(data.message);
-
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  return(
+  return (
     <div className={styles.container}>
-      <header className={styles.header}>
-      </header>
-      <form onSubmit={handleSubmit}>
-        <label className={styles.lable}>Enter Unique Filename: </label>
-        <input type="text" name="filename" value={fileName} onChange={handleChange} className={styles.input}></input>
-        <br />
-        <input type="file" name="file" onChange={handleChange} className={styles.input}></input>
-        <br />
-        <input type="Submit" className={styles.button}></input>
-      </form>
-
-      {result && <p className={styles.result}>{result}</p>}
+      <h1>Let's go for a contract</h1>
+      <p>Please select an option below to continue:</p>
+      <div>
+      <button className={styles.btn} onClick={handleMetamaskLogin}>Login with Metamask</button>
+      <br />
+      <br />
     </div>
-  )
+        <Link href="/signup">
+          <button className={styles.btn}>Signup</button>
+        </Link>
+      </div>
+  );
 }
 
-export default App;
+export default HomePage;

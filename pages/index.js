@@ -30,6 +30,14 @@ function HomePage() {
         <Link href="/signup">
           <button className={styles.btn}>Signup</button>
         </Link>
+        <br />
+        <br />
+        <br />
+
+        <Link href="/PDF">
+          <button className={styles.btn}>PDF</button>
+        </Link>
+
       </div>
   );
 }

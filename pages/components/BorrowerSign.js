@@ -1,36 +1,51 @@
-import { useState } from 'react';
-import { PDFDocument, rgb } from 'pdf-lib';
+"use client";
+
+import { useState, useEffect } from 'react';
+import { PDFDocument } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 
-export default function BorrowerSign({ pdfData, signatures }) {
+
+export default function BorrowerSign({ pdfData, signatures, onSignaturesSubmit }) {
     const [signedPdfData, setSignedPdfData] = useState(null);
 
-    const handleSign = async () => {
-        const pdfDoc = await PDFDocument.load(pdfData);
-        const pages = pdfDoc.getPages();
-        const firstPage = pages[0];
-
-        if (signatures.lender) {
-            firstPage.drawText('Lender Signature', {
-                x: signatures.lender.x,
-                y: firstPage.getHeight() - signatures.lender.y,
-                size: 12,
-                color: rgb(0, 0, 0),
-            });
-        }
-
-        if (signatures.borrower) {
-            firstPage.drawText('Borrower Signature', {
-                x: signatures.borrower.x,
-                y: firstPage.getHeight() - signatures.borrower.y,
-                size: 12,
-                color: rgb(0, 0, 0),
-            });
-        }
-
-        const pdfBytes = await pdfDoc.save();
-        setSignedPdfData(URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' })));
+    const handleSaveSignatures = (newSignatures) => {
+        onSignaturesSubmit(newSignatures);
     };
+
+    useEffect(() => {
+        const signPdf = async () => {
+            if (!pdfData || !signatures.lender || !signatures.borrower) return;
+
+            const pdfDoc = await PDFDocument.load(pdfData);
+            const pages = pdfDoc.getPages();
+            const firstPage = pages[0];
+
+            if (signatures.lender) {
+                const lenderSignatureImage = await pdfDoc.embedPng(signatures.lender);
+                firstPage.drawImage(lenderSignatureImage, {
+                    x: signatures.lender.x,
+                    y: signatures.lender.y,
+                    width: lenderSignatureImage.width,
+                    height: lenderSignatureImage.height,
+                });
+            }
+
+            if (signatures.borrower) {
+                const borrowerSignatureImage = await pdfDoc.embedPng(signatures.borrower);
+                firstPage.drawImage(borrowerSignatureImage, {
+                    x: signatures.borrower.x,
+                    y: signatures.borrower.y,
+                    width: borrowerSignatureImage.width,
+                    height: borrowerSignatureImage.height,
+                });
+            }
+
+            const signedPdfBytes = await pdfDoc.save();
+            setSignedPdfData(URL.createObjectURL(new Blob([signedPdfBytes], { type: 'application/pdf' })));
+        };
+
+        signPdf();
+    }, [pdfData, signatures]);
 
     const handleDownload = () => {
         if (signedPdfData) {
@@ -40,13 +55,14 @@ export default function BorrowerSign({ pdfData, signatures }) {
 
     return (
         <div>
-            <button onClick={handleSign}>Sign PDF</button>
+            <h3>Sign the Document</h3>
+            <SignatureInput onSave={handleSaveSignatures} />
+            <button onClick={handleDownload}>Download Signed PDF</button>
 
             {signedPdfData && (
                 <div>
                     <h3>Signed PDF Preview</h3>
                     <iframe src={signedPdfData} width="600" height="800"></iframe>
-                    <button onClick={handleDownload}>Download Signed PDF</button>
                 </div>
             )}
         </div>
